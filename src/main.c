@@ -2,6 +2,7 @@
 #include <string.h>
 
 int main(){
+	//Input buffer and associated size variables
 	char *input = NULL;
 	size_t inputLen = 0;
 	ssize_t inputRead;
@@ -10,6 +11,8 @@ int main(){
 	char *args;
 	
 	int i;
+	
+	puts("Pilgrim v.2a ready");
 	
 	//Engine read-eval-print loop
 	for(;;){
@@ -28,7 +31,9 @@ int main(){
 		//Split at the first space to separate command and arguments
 		//NOTE: This changes (invalidates?) the input variable
 		command = strtok(input, " ");
-		args = strtok(NULL, "");
+		args = strtok(NULL, ""); 
+		
+		//Interpret the command and args:
 		
 		//stop - stops the engine
 		if(strcmp("stop", command) == 0){
