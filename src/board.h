@@ -28,6 +28,8 @@ enum Winner{
     DRAW, NONE
 };
 
+//Structs
+
 struct Coord{
     int x;
     int y;
@@ -53,6 +55,8 @@ struct Board{
 };
 
 struct Board newBoard();
+
+//Functions
 
 //Gets moves from current board into passed array
 //If checkForWin is enabled, each move will be checked to see if it wins

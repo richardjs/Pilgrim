@@ -3,6 +3,9 @@
 #include "board.h"
 
 int main(){
+	//Turn output buffering off
+	setbuf(stdout, NULL);
+
 	//Input buffer and associated size variables
 	char *input = NULL;
 	size_t inputLen = 0;
@@ -63,6 +66,7 @@ int main(){
 				printMove(&moves[i]);
 				putchar('\n');
 			}
+			puts("done");
 		}
 
 		//Invalid command
