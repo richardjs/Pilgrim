@@ -15,7 +15,7 @@ int main(){
 	struct Board board = newBoard();
 	
 	int i;
-	
+		
 	puts("Pilgrim v.2a ready");
 	
 	//Engine read-eval-print loop
@@ -53,6 +53,16 @@ int main(){
 		else if(strcmp("getboard", command) == 0){
 			printBoard(&board);
 			putchar('\n');		
+		}
+		
+		//getmoves - prints a list of possible moves
+		else if(strcmp("getmoves", command) == 0){
+			struct Move moves[MAX_MOVES];
+			int moveCount = getMoves(&board, moves, 0);
+			for(i = 0; i < moveCount; i++){
+				printMove(&moves[i]);
+				putchar('\n');
+			}
 		}
 
 		//Invalid command

@@ -1,3 +1,9 @@
+#ifndef BOARD_H
+#define BOARD_H
+
+//Maximum number of moves is all eight pins moving in all eight different directions
+#define MAX_MOVES 8*8
+
 //Enums
 //White and black constants have the same integer value across enums
 //This allows easy comparison between enums, so don't feel bad about
@@ -27,6 +33,11 @@ struct Coord{
     int y;
 };
 
+struct Move{
+    struct Coord start;
+    struct Coord end;
+};
+
 struct Board{
     //The coordinate planes for pins and paths
     enum Entity pinBoard[7][7];
@@ -43,4 +54,15 @@ struct Board{
 
 struct Board newBoard();
 
+//Gets moves from current board into passed array
+//If checkForWin is enabled, each move will be checked to see if it wins
+//The board is not modified permanently, but changed for purposes of testing for winner
+//Returns the number of moves found, or -1 if a winning move is found
+//If a winning move is found, it will be the first in the array
+int getMoves(struct Board*, struct Move[], const int checkForWin);
+
+//Serialize the various structs and write to stdout (with no newline)
 void printBoard(const struct Board*);
+void printMove(const struct Move*);
+
+#endif

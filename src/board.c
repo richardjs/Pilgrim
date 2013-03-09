@@ -73,12 +73,11 @@ struct Board newBoard(){
     return board;
 }
 
-//Serialize the board and write it to stdout
 void printBoard(const struct Board *board){
     char string[79];
     int p = 0; //Place in string
     int x, y;
-    
+        
     //Pin board
     for(x = 0; x < 7; x++){
         for(y = 0; y < 7; y++){
@@ -126,4 +125,118 @@ void printBoard(const struct Board *board){
     string[p++] = '\0';
     
     printf("%s", string);
+}
+
+static void recordMove(struct Move moves[], int *moveCount,
+                       int sx, int sy, int ex, int ey){
+    moves[*moveCount].start.x = sx;
+    moves[*moveCount].start.y = sy;
+    moves[*moveCount].end.x = ex;
+    moves[*moveCount].end.y = ey;
+    *moveCount += 1;
+}
+
+int getMoves(struct Board* board, struct Move moves[], const int checkForWin){
+    enum Color turn = board->turn;
+    enum Color other = !turn;
+    int moveCount = 0;
+    
+    int  i, x, y, tx, ty;
+    for(i = 0; i < 8; i++){
+        //x == -1 indicates captured pin, see board.h
+        if(board->pins[turn][i].x == -1){
+            continue;
+        }
+
+        x = board->pins[turn][i].x;
+        y = board->pins[turn][i].y;
+        
+        //Diagonal moves
+        tx = x + 1;
+        ty = y + 1;
+        if(tx < 7 && ty < 7 && board->pinBoard[ty][tx] == EMPTY){
+            //TODO: check for win here and on all moves
+            recordMove(moves, &moveCount, x, y, tx, ty);
+        }
+        
+        tx = x + 1;
+        ty = y - 1;
+        if(tx < 7 && ty >= 0 && board->pinBoard[ty][tx] == EMPTY){
+            recordMove(moves, &moveCount, x, y, tx, ty);
+        }
+        
+        tx = x - 1;
+        ty = y + 1;
+        if(tx >= 0 && ty < 7 && board->pinBoard[ty][tx] == EMPTY){
+            recordMove(moves, &moveCount, x, y, tx, ty);
+        }
+        
+        tx = x - 1;
+        ty = y - 1;
+        if(tx >= 0 && ty >= 0 && board->pinBoard[ty][tx] == EMPTY){
+            recordMove(moves, &moveCount, x, y, tx, ty);
+        }
+        
+        //Adjacent moves and captures
+        tx = x + 1;
+        if(tx < 7){
+            if(board->pinBoard[y][tx] == EMPTY){
+                recordMove(moves, &moveCount, x, y, tx, y);
+            }
+            else if(board->pinBoard[y][tx] == other){
+                tx = x + 2;
+                if(tx < 7 && board->pinBoard[y][tx] == EMPTY){
+                    recordMove(moves, &moveCount, x, y, tx, y);
+                }
+            }
+        }
+        
+        tx = x - 1;
+        if(tx >= 0){
+            if(board->pinBoard[y][tx] == EMPTY){
+                recordMove(moves, &moveCount, x, y, tx, y);
+            }
+            else if(board->pinBoard[y][tx] == other){
+                tx = x - 2;
+                if(tx >= 0 && board->pinBoard[y][tx] == EMPTY){
+                    recordMove(moves, &moveCount, x, y, tx, y);
+                }
+            }
+        }
+        
+        ty = y + 1;
+        if(ty < 7){
+            if(board->pinBoard[ty][x] == EMPTY){
+                recordMove(moves, &moveCount, x, y, x, ty);
+            }
+            else if(board->pinBoard[ty][x] == other){
+                ty = y + 2;
+                if(ty < 7 && board->pinBoard[ty][x] == EMPTY){
+                    recordMove(moves, &moveCount, x, y, x, ty);
+                }
+            }
+        }
+        
+        ty = y - 1;
+        if(ty >= 0){
+            if(board->pinBoard[ty][x] == EMPTY){
+                recordMove(moves, &moveCount, x, y, x, ty);
+            }
+            else if(board->pinBoard[ty][x] == other){
+                ty = y - 2;
+                if(ty >= 0 && board->pinBoard[ty][x] == EMPTY){
+                    recordMove(moves, &moveCount, x, y, x, ty);
+                }
+            }
+        }
+    }
+        
+    return moveCount;
+}
+
+void printMove(const struct Move* move){
+    char startCol = move->start.x + 65;
+    char endCol = move->end.x + 65;
+    printf("%c%d-%c%d", move->start.x + 65, move->start.y + 1,
+                        move->end.x + 65, move->end.y + 1);
 }
