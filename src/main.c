@@ -19,7 +19,7 @@ int main(){
 	
 	int i;
 		
-	puts("Pilgrim v.2a ready");
+	puts("Pilgrim v.3a ready");
 	
 	//Engine read-eval-print loop
 	for(;;){

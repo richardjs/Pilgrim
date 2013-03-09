@@ -65,6 +65,10 @@ struct Board newBoard();
 //If a winning move is found, it will be the first in the array
 int getMoves(struct Board*, struct Move[], const int checkForWin);
 
+//Make a move on a board
+//Note: does not ensure the move is valid
+void move(struct Board*, const struct Move*);
+
 //Serialize the various structs and write to stdout (with no newline)
 void printBoard(const struct Board*);
 void printMove(const struct Move*);

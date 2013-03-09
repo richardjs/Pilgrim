@@ -73,60 +73,6 @@ struct Board newBoard(){
     return board;
 }
 
-void printBoard(const struct Board *board){
-    char string[79];
-    int p = 0; //Place in string
-    int x, y;
-        
-    //Pin board
-    for(x = 0; x < 7; x++){
-        for(y = 0; y < 7; y++){
-            switch(board->pinBoard[y][x]){
-            case WHITE:
-                string[p++] = 'w';
-                break;
-            case BLACK:
-                string[p++] = 'b';
-                break;
-            case EMPTY:
-                string[p++] = '.';
-                break;
-            }
-        }
-    }
-        
-    //Path board
-    for(x = 0; x < 6; x++){
-        for(y = 0; y < 6; y++){
-            switch(board->pathBoard[y][x]){
-            case WHITE:
-                string[p++] = 'w';
-                break;
-            case BLACK:
-                string[p++] = 'b';
-                break;
-            case EMPTY:
-                string[p++] = '.';
-                break;
-            }
-        }
-    }
-    
-    //Turn indicator
-    switch(board->turn){
-    case WHITE:
-        string[p++] = 'w';
-        break;
-    case BLACK:
-        string[p++] = 'b';
-        break;
-    }
-    
-    string[p++] = '\0';
-    
-    printf("%s", string);
-}
-
 static void recordMove(struct Move moves[], int *moveCount,
                        int sx, int sy, int ex, int ey){
     moves[*moveCount].start.x = sx;
@@ -177,7 +123,7 @@ int getMoves(struct Board* board, struct Move moves[], const int checkForWin){
             recordMove(moves, &moveCount, x, y, tx, ty);
         }
         
-        //Adjacent moves and captures
+        //Adjacent moves and pin captures
         tx = x + 1;
         if(tx < 7){
             if(board->pinBoard[y][tx] == EMPTY){
@@ -232,6 +178,115 @@ int getMoves(struct Board* board, struct Move moves[], const int checkForWin){
     }
         
     return moveCount;
+}
+
+void move(struct Board* board, const struct Move* move){
+    enum Color turn = board->turn;
+    enum Color other = !turn;
+    
+    int sx = move->start.x;
+    int sy = move->start.y;
+    int ex = move->end.x;
+    int ey = move->end.y;
+    
+    board->pinBoard[sy][sx] = EMPTY;
+    board->pinBoard[ey][ex] = turn;
+    
+    //Diagonal move
+    if(sx != ex && sy != ey){
+        //Determine coordinate of placed path
+        int px = sx < ex ? sx : ex;
+        int py = sy < ey ? sy : ey;
+        
+        if(board->pathBoard[py][px] == EMPTY || board->pathBoard[py][px] == other){
+            board->pathBoard[py][px] = turn;
+        }
+    }
+    
+    //Pin captures
+    if(abs(sx - ex) == 2){
+        int cx = (sx + ex) / 2;
+        board->pinBoard[sy][cx] = EMPTY;
+        
+        //Remove pin from list;
+        int i;
+        for(i = 0; i < 8; i++){
+            if(board->pins[other][i].x == cx && board->pins[other][i].y == sy){
+                board->pins[other][i].x = -1;
+                break;
+            }
+        }
+    }
+    
+    if(abs(sy - ey) == 2){
+        int cy = (sy + ey) / 2;
+        board->pinBoard[cy][sx] = EMPTY;
+        
+        //Remove pin from list;
+        int i;
+        for(i = 0; i < 8; i++){
+            if(board->pins[other][i].y == cy && board->pins[other][i].x == sx){
+                board->pins[other][i].x = -1;
+                break;
+            }
+        }
+    }
+    
+    board->turn = other;
+}
+
+void printBoard(const struct Board *board){
+    char string[79];
+    int p = 0; //Place in string
+    int x, y;
+        
+    //Pin board
+    for(x = 0; x < 7; x++){
+        for(y = 0; y < 7; y++){
+            switch(board->pinBoard[y][x]){
+            case WHITE:
+                string[p++] = 'w';
+                break;
+            case BLACK:
+                string[p++] = 'b';
+                break;
+            case EMPTY:
+                string[p++] = '.';
+                break;
+            }
+        }
+    }
+        
+    //Path board
+    for(x = 0; x < 6; x++){
+        for(y = 0; y < 6; y++){
+            switch(board->pathBoard[y][x]){
+            case WHITE:
+                string[p++] = 'w';
+                break;
+            case BLACK:
+                string[p++] = 'b';
+                break;
+            case EMPTY:
+                string[p++] = '.';
+                break;
+            }
+        }
+    }
+    
+    //Turn indicator
+    switch(board->turn){
+    case WHITE:
+        string[p++] = 'w';
+        break;
+    case BLACK:
+        string[p++] = 'b';
+        break;
+    }
+    
+    string[p++] = '\0';
+    
+    printf("%s", string);
 }
 
 void printMove(const struct Move* move){

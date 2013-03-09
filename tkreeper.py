@@ -8,7 +8,7 @@ WHITE, BLACK, EMPTY, DISABLED = range(4) #Pin entities
 WHITE, BLACK, EMPTY, WHITE_BASE, BLACK_BASE= range(5) #Path entities
 WHITE, BLACK, DRAW = range(3) #Outcomes
 
-NAME = 'Tkreeper v.2a'
+NAME = 'Tkreeper v.3a'
 
 BOARD_SIZE = 12 * 8 * 6.5
 
