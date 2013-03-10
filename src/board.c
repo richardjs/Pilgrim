@@ -180,7 +180,7 @@ int getMoves(struct Board* board, struct Move moves[], const int checkForWin){
     return moveCount;
 }
 
-void move(struct Board* board, const struct Move* move){
+void makeMove(struct Board* board, const struct Move* move){
     enum Color turn = board->turn;
     enum Color other = !turn;
     
@@ -235,6 +235,14 @@ void move(struct Board* board, const struct Move* move){
     board->turn = other;
 }
 
+int moveCompare(const struct Move* move1, const struct Move* move2){
+    if(move1->start.x != move2->start.x) return 1;
+    if(move1->start.y != move2->start.y) return 1;
+    if(move1->end.x != move2->end.x) return 1;
+    if(move1->end.y != move2->end.y) return 1;
+    return 0;
+}
+
 struct Move stringToMove(const char string[]){
     struct Move move;
     
@@ -252,8 +260,8 @@ void printBoard(const struct Board *board){
     int x, y;
         
     //Pin board
-    for(x = 0; x < 7; x++){
-        for(y = 0; y < 7; y++){
+    for(y = 0; y < 7; y++){
+        for(x = 0; x < 7; x++){
             switch(board->pinBoard[y][x]){
             case WHITE:
                 string[p++] = 'w';
@@ -269,8 +277,8 @@ void printBoard(const struct Board *board){
     }
         
     //Path board
-    for(x = 0; x < 6; x++){
-        for(y = 0; y < 6; y++){
+    for(y = 0; y < 6; y++){
+        for(x = 0; x < 6; x++){
             switch(board->pathBoard[y][x]){
             case WHITE:
                 string[p++] = 'w';

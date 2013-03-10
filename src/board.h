@@ -67,7 +67,10 @@ int getMoves(struct Board*, struct Move[], const int checkForWin);
 
 //Make a move on a board
 //Note: does not ensure the move is valid
-void move(struct Board*, const struct Move*);
+void makeMove(struct Board*, const struct Move*);
+
+//Compares two moves, returning 0 if they are the same and 1 if not (mimicking strcmp)
+int moveCompare(const struct Move*, const struct Move*);
 
 //Converts strings to various structs
 struct Move stringToMove(const char[]);

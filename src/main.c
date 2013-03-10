@@ -72,7 +72,26 @@ int main(){
 		//move - makes a move
 		else if(strcmp("move", command) == 0){
 			struct Move move = stringToMove(args);
-			printMove(&move);
+			
+			//Make sure it's a legal move	
+			int legal = 0;
+			struct Move moves[MAX_MOVES];
+			int moveCount = getMoves(&board, moves, 0);
+			for(i = 0; i < moveCount; i++){
+				if(moveCompare(&move, &moves[i]) == 0){
+					legal = 1;
+					break;
+				}
+			}
+			
+			if(legal == 0){
+				printf("invalid move: ");
+				printMove(&move);
+				putchar('\n');
+				continue;
+			}
+			
+			makeMove(&board, &move);
 		}
 
 		//Invalid command
