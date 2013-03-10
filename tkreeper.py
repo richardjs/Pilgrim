@@ -200,8 +200,8 @@ class CreeperBoard(Canvas):
         
         self.selected = None
         
-        if self.turn == BLACK and self.winner == None:
-            self.parent.after(250, self.computer_move) 
+        #if self.turn == BLACK and self.winner == None:
+        #    self.parent.after(250, self.computer_move) 
     
     def computer_move(self):
         self.engine.send('think')

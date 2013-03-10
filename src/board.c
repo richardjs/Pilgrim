@@ -238,10 +238,10 @@ void move(struct Board* board, const struct Move* move){
 struct Move stringToMove(const char string[]){
     struct Move move;
     
-    move.start.x = string[0] - 65;
-    move.start.y = string[1] - 49;
-    move.end.x = string[3] - 65;
-    move.end.y = string[4] - 49;
+    move.start.x = toupper(string[0]) - 65;
+    move.start.y = toupper(string[1]) - 49;
+    move.end.x = toupper(string[3]) - 65;
+    move.end.y = toupper(string[4]) - 49;
     
     return move;
 }

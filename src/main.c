@@ -68,6 +68,12 @@ int main(){
 			}
 			puts("done");
 		}
+		
+		//move - makes a move
+		else if(strcmp("move", command) == 0){
+			struct Move move = stringToMove(args);
+			printMove(&move);
+		}
 
 		//Invalid command
 		else{
