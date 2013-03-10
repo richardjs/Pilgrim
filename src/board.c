@@ -192,6 +192,17 @@ void makeMove(struct Board* board, const struct Move* move){
     board->pinBoard[sy][sx] = EMPTY;
     board->pinBoard[ey][ex] = turn;
     
+    int i;
+    
+    //Move pin marker
+    for(i = 0; i < 8; i++){
+        if(board->pins[turn][i].x == sx && board->pins[turn][i].y == sy){
+            board->pins[turn][i].x = ex;
+            board->pins[turn][i].y = ey;
+            break;
+        }
+    }
+    
     //Diagonal move
     if(sx != ex && sy != ey){
         //Determine coordinate of placed path
@@ -209,7 +220,6 @@ void makeMove(struct Board* board, const struct Move* move){
         board->pinBoard[sy][cx] = EMPTY;
         
         //Remove pin from list;
-        int i;
         for(i = 0; i < 8; i++){
             if(board->pins[other][i].x == cx && board->pins[other][i].y == sy){
                 board->pins[other][i].x = -1;
@@ -223,7 +233,6 @@ void makeMove(struct Board* board, const struct Move* move){
         board->pinBoard[cy][sx] = EMPTY;
         
         //Remove pin from list;
-        int i;
         for(i = 0; i < 8; i++){
             if(board->pins[other][i].y == cy && board->pins[other][i].x == sx){
                 board->pins[other][i].x = -1;

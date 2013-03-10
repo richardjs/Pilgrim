@@ -55,7 +55,7 @@ int main(){
 		//getboard - prints the serialized board 
 		else if(strcmp("getboard", command) == 0){
 			printBoard(&board);
-			putchar('\n');		
+			putchar('\n');
 		}
 		
 		//getmoves - prints a list of possible moves
