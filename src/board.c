@@ -235,6 +235,17 @@ void move(struct Board* board, const struct Move* move){
     board->turn = other;
 }
 
+struct Move stringToMove(const char string[]){
+    struct Move move;
+    
+    move.start.x = string[0] - 65;
+    move.start.y = string[1] - 49;
+    move.end.x = string[3] - 65;
+    move.end.y = string[4] - 49;
+    
+    return move;
+}
+
 void printBoard(const struct Board *board){
     char string[79];
     int p = 0; //Place in string

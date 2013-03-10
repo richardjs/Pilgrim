@@ -69,6 +69,9 @@ int getMoves(struct Board*, struct Move[], const int checkForWin);
 //Note: does not ensure the move is valid
 void move(struct Board*, const struct Move*);
 
+//Converts strings to various structs
+struct Move stringToMove(const char[]);
+
 //Serialize the various structs and write to stdout (with no newline)
 void printBoard(const struct Board*);
 void printMove(const struct Move*);
