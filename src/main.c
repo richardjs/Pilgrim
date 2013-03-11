@@ -92,8 +92,6 @@ int main(){
 			}
 			
 			makeMove(&board, &move);
-			
-			fprintf(stderr, "%d\n", checkForWinner(&board, WHITE));
 		}
 
 		//Invalid command
