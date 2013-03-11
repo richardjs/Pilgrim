@@ -16,7 +16,8 @@ int main(){
 	char *args;
 	
 	struct Board board = newBoard();
-
+	board = stringToBoard("bb..wb...w.wb.....w.......w.....bw.....bww.bb........w...www...w...www.......w");
+	
 	int i;
 		
 	puts("Pilgrim v.3a ready");

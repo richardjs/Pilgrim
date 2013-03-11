@@ -70,7 +70,7 @@ int checkForWinner(const struct Board*, const enum Color);
 int moveCompare(const struct Move*, const struct Move*);
 
 //Converts strings to various structs
-struct Board stringToBoard(const char[]);
+struct Board stringToBoard(const char*);
 struct Move stringToMove(const char[]);
 
 //Serialize the various structs and write to stdout (with no newline)

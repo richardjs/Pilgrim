@@ -322,6 +322,60 @@ int moveCompare(const struct Move* move1, const struct Move* move2){
     return 0;
 }
 
+struct Board stringToBoard(const char* string){
+    struct Board board;
+    
+    int p = 0; //Place in string
+    int i;
+
+    enum Entity* currentBoard = &board.pinBoard;
+    for(i = 0; i < 49; i++){
+        if(i == 0 || i == 6 || i == 42 || i == 48){
+            currentBoard[i] = DISABLED;
+            continue;
+        }
+        //addPin(struct Board *board, enum Color color, int x, int y)
+        switch(string[p++]){
+        case 'w':
+            currentBoard[i] = WHITE;
+            addPin(&board, WHITE, 0, i);
+            break;
+        case 'b':
+            currentBoard[i] = BLACK;
+            addPin(&board, BLACK, 0, i);
+            break;
+        default:
+            currentBoard[i] = EMPTY;
+        }
+    }
+    
+    currentBoard = &board.pathBoard;
+    for(i = 0; i < 36; i++){
+        if(i == 5 || i == 30){
+            currentBoard[i] = WHITE_BASE;
+            continue;
+        } else if(i == 0 || i == 35){
+            currentBoard[i] = BLACK_BASE;
+            continue;
+        }
+        
+        switch(string[p++]){
+        case 'w':
+            currentBoard[i] = WHITE;
+            break;
+        case 'b':
+            currentBoard[i] = BLACK;
+            break;
+        default:
+            currentBoard[i] = EMPTY;
+        }
+    }
+    
+    board.turn = string[p++] == 'w' ? WHITE : BLACK;
+    
+    return board;
+}
+
 struct Move stringToMove(const char string[]){
     struct Move move;
     
