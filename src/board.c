@@ -275,9 +275,9 @@ int checkForWinner(const struct Board* board, const enum Color color){
             return 1;
         }
         if(tx < 6 && board->pathBoard[y][tx] == color && crumbs[y][tx] == 0){
-            sp++;
             stack[sp].x = tx;
             stack[sp].y = y;
+            sp++;
         }
         
         tx = x - 1;
@@ -285,9 +285,9 @@ int checkForWinner(const struct Board* board, const enum Color color){
             return 1;
         }
         if(tx >= 0 && board->pathBoard[y][tx] == color && crumbs[y][tx] == 0){
-            sp++;
             stack[sp].x = tx;
             stack[sp].y = y;
+            sp++;
         }
         
         ty = y + 1;
@@ -295,9 +295,9 @@ int checkForWinner(const struct Board* board, const enum Color color){
             return 1;
         }
         if(ty < 6 && board->pathBoard[ty][x] == color && crumbs[ty][x] == 0){
-            sp++;
             stack[sp].x = x;
             stack[sp].y = ty;
+            sp++;
         }
         
         ty = y - 1;
@@ -305,9 +305,9 @@ int checkForWinner(const struct Board* board, const enum Color color){
             return 1;
         }
         if(ty >= 0 && board->pathBoard[ty][x] == color && crumbs[ty][x] == 0){
-            sp++;
             stack[sp].x = x;
             stack[sp].y = ty;
+            sp++;
         }
     }
     
@@ -327,8 +327,14 @@ struct Board stringToBoard(const char* string){
     
     int p = 0; //Place in string
     int i;
+    
+    //Clear the board pin list before we add any``
+    for(i = 0; i < 8; i++){
+        board.pins[WHITE][i].x = -1;
+        board.pins[BLACK][i].x = -1;    
+    }
 
-    enum Entity* currentBoard = &board.pinBoard;
+    enum Entity* currentBoard = &board.pinBoard[0][0];
     for(i = 0; i < 49; i++){
         if(i == 0 || i == 6 || i == 42 || i == 48){
             currentBoard[i] = DISABLED;
@@ -338,18 +344,18 @@ struct Board stringToBoard(const char* string){
         switch(string[p++]){
         case 'w':
             currentBoard[i] = WHITE;
-            addPin(&board, WHITE, 0, i);
+            addPin(&board, WHITE, i % 7, i / 7);
             break;
         case 'b':
             currentBoard[i] = BLACK;
-            addPin(&board, BLACK, 0, i);
+            addPin(&board, BLACK, i % 7, i / 7);
             break;
         default:
             currentBoard[i] = EMPTY;
         }
     }
     
-    currentBoard = &board.pathBoard;
+    currentBoard = &board.pathBoard[0][0];
     for(i = 0; i < 36; i++){
         if(i == 5 || i == 30){
             currentBoard[i] = WHITE_BASE;

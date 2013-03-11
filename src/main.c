@@ -16,7 +16,6 @@ int main(){
 	char *args;
 	
 	struct Board board = newBoard();
-	board = stringToBoard("bb..wb...w.wb.....w.......w.....bw.....bww.bb........w...www...w...www.......w");
 	
 	int i;
 		
@@ -93,6 +92,8 @@ int main(){
 			}
 			
 			makeMove(&board, &move);
+			
+			fprintf(stderr, "%d\n", checkForWinner(&board, WHITE));
 		}
 
 		//Invalid command
