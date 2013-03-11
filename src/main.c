@@ -16,7 +16,7 @@ int main(){
 	char *args;
 	
 	struct Board board = newBoard();
-	
+
 	int i;
 		
 	puts("Pilgrim v.3a ready");

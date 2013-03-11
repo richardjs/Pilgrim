@@ -22,12 +22,6 @@ enum Entity{
     EMPTY, DISABLED
 };
 
-//Game winner, or NONE if there is none
-enum Winner{
-    WHITE_WINS = 0, BLACK_WINS = 1,
-    DRAW, NONE
-};
-
 //Structs
 
 struct Coord{
@@ -69,10 +63,14 @@ int getMoves(struct Board*, struct Move[], const int checkForWin);
 //Note: does not ensure the move is valid
 void makeMove(struct Board*, const struct Move*);
 
+//Checks to see if the given color has won, returns 1 for win, 0 for loss
+int checkForWinner(const struct Board*, const enum Color);
+
 //Compares two moves, returning 0 if they are the same and 1 if not (mimicking strcmp)
 int moveCompare(const struct Move*, const struct Move*);
 
 //Converts strings to various structs
+struct Board stringToBoard(const char[]);
 struct Move stringToMove(const char[]);
 
 //Serialize the various structs and write to stdout (with no newline)

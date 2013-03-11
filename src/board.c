@@ -244,6 +244,76 @@ void makeMove(struct Board* board, const struct Move* move){
     board->turn = other;
 }
 
+int checkForWinner(const struct Board* board, const enum Color color){
+    //This is a basic algorithm that can probably be improved
+    //It starts at the left base, and tries to walk to the right
+    
+    //Stack of coords to walk
+    struct Coord stack[6 * 6];
+    int sp = 1; //Stack position, pointing to where the next element is pushed
+    
+    int crumbs[6][6] = {0};
+    
+    stack[0].x = 0;
+    stack[0].y = color == WHITE ? 5 : 0;
+    
+    int goalX = 5;
+    int goalY = color == WHITE ? 0 : 5;
+    
+    int x, y, tx, ty;
+    while(sp > 0){
+        sp--;
+        
+        x = stack[sp].x;
+        y = stack[sp].y;
+        
+        crumbs[y][x] = 1;
+        
+        //TODO: The goal checking can probably be improved
+        tx = x + 1;
+        if(tx == goalX && y == goalY){
+            return 1;
+        }
+        if(tx < 6 && board->pathBoard[y][tx] == color && crumbs[y][tx] == 0){
+            sp++;
+            stack[sp].x = tx;
+            stack[sp].y = y;
+        }
+        
+        tx = x - 1;
+        if(tx == goalX && y == goalY){
+            return 1;
+        }
+        if(tx >= 0 && board->pathBoard[y][tx] == color && crumbs[y][tx] == 0){
+            sp++;
+            stack[sp].x = tx;
+            stack[sp].y = y;
+        }
+        
+        ty = y + 1;
+        if(x == goalX && ty == goalY){
+            return 1;
+        }
+        if(ty < 6 && board->pathBoard[ty][x] == color && crumbs[ty][x] == 0){
+            sp++;
+            stack[sp].x = x;
+            stack[sp].y = ty;
+        }
+        
+        ty = y - 1;
+        if(x == goalX && ty == goalY){
+            return 1;
+        }
+        if(ty >= 0 && board->pathBoard[ty][x] == color && crumbs[ty][x] == 0){
+            sp++;
+            stack[sp].x = x;
+            stack[sp].y = ty;
+        }
+    }
+    
+    return 0;
+}
+
 int moveCompare(const struct Move* move1, const struct Move* move2){
     if(move1->start.x != move2->start.x) return 1;
     if(move1->start.y != move2->start.y) return 1;
