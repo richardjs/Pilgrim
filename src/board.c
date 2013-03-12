@@ -87,7 +87,8 @@ int getMoves(struct Board* board, struct Move moves[], const int checkForWin){
     enum Color other = !turn;
     int moveCount = 0;
     
-    int  i, x, y, tx, ty;
+    int  i, x, y, tx, ty, isWin;
+    enum Entity temp;
     for(i = 0; i < 8; i++){
         //x == -1 indicates captured pin, see board.h
         if(board->pins[turn][i].x == -1){
@@ -101,25 +102,73 @@ int getMoves(struct Board* board, struct Move moves[], const int checkForWin){
         tx = x + 1;
         ty = y + 1;
         if(tx < 7 && ty < 7 && board->pinBoard[ty][tx] == EMPTY){
-            //TODO: check for win here and on all moves
+            //TODO: We can probably improve how this is checked
+            //      (or at least make it cleaner)
+            if(checkForWin){
+                temp = board->pathBoard[y][x];
+                board->pathBoard[y][x] = turn;
+                isWin = checkForWinner(board, turn);
+                board->pathBoard[y][x] = temp;
+                if(isWin){
+                    moveCount = 0;
+                    recordMove(moves, &moveCount, x, y, tx, ty);
+                    return -1;
+                }
+            }
+            
             recordMove(moves, &moveCount, x, y, tx, ty);
         }
         
         tx = x + 1;
         ty = y - 1;
         if(tx < 7 && ty >= 0 && board->pinBoard[ty][tx] == EMPTY){
+            if(checkForWin){
+                temp = board->pathBoard[ty][x];
+                board->pathBoard[ty][x] = turn;
+                isWin = checkForWinner(board, turn);
+                board->pathBoard[ty][x] = temp;
+                if(isWin){
+                    moveCount = 0;
+                    recordMove(moves, &moveCount, x, y, tx, ty);
+                    return -1;
+                }
+            }
+        
             recordMove(moves, &moveCount, x, y, tx, ty);
         }
         
         tx = x - 1;
         ty = y + 1;
         if(tx >= 0 && ty < 7 && board->pinBoard[ty][tx] == EMPTY){
+            if(checkForWin){
+                temp = board->pathBoard[y][tx];
+                board->pathBoard[y][tx] = turn;
+                isWin = checkForWinner(board, turn);
+                board->pathBoard[y][tx] = temp;
+                if(isWin){
+                    moveCount = 0;
+                    recordMove(moves, &moveCount, x, y, tx, ty);
+                    return -1;
+                }
+            }
+        
             recordMove(moves, &moveCount, x, y, tx, ty);
         }
         
         tx = x - 1;
         ty = y - 1;
         if(tx >= 0 && ty >= 0 && board->pinBoard[ty][tx] == EMPTY){
+            if(checkForWin){
+                temp = board->pathBoard[ty][tx];
+                board->pathBoard[ty][tx] = turn;
+                isWin = checkForWinner(board, turn);
+                board->pathBoard[ty][tx] = temp;
+                if(isWin){
+                    moveCount = 0;
+                    recordMove(moves, &moveCount, x, y, tx, ty);
+                    return -1;
+                }
+            }
             recordMove(moves, &moveCount, x, y, tx, ty);
         }
         
