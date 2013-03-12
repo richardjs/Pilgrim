@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "board.h"
+#include "think.h"
 
 int main(){
 	//Turn output buffering off
@@ -16,6 +17,7 @@ int main(){
 	char *args;
 	
 	struct Board board = newBoard();
+	//board = stringToBoard("bb..wb...w.wb.....w.......w.....bw.....bww.bb........w...www...w...www.......w");
 	
 	int i;
 		
@@ -94,6 +96,13 @@ int main(){
 			makeMove(&board, &move);
 		}
 
+		//think - AI analyzes the board and gives its move
+		else if(strcmp("think", command) == 0){
+			struct Move move = think(&board);
+			printMove(&move);
+			putchar('\n');	
+		}
+		
 		//Invalid command
 		else{
 			printf("Invalid command: %s\n", command);
