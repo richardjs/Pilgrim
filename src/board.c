@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "board.h"
 
 static void addPin(struct Board *board, enum Color color, int x, int y){

@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "board.h"
 #include "think.h"
 
 int main(){
 	//Turn output buffering off
 	setbuf(stdout, NULL);
+
+	//Seed the RNG
+	srand(time(NULL));
 
 	//Input buffer and associated size variables
 	char *input = NULL;
@@ -18,7 +22,7 @@ int main(){
 	
 	struct Board board = newBoard();
 	//board = stringToBoard("bb..wb...w.wb.....w.......w.....bw.....bww.bb........w...www...w...www.......w");
-	
+		
 	int i;
 		
 	puts("Pilgrim v.3a ready");
@@ -71,6 +75,19 @@ int main(){
 			puts("done");
 		}
 		
+		//getwinner - prints the winner
+		//('w' for white, 'b' for black, 'd' for draw, '.' for none)
+		else if(strcmp("getwinner", command) == 0){
+			if(checkForWinner(&board, WHITE) == 1){
+				puts("w");
+			}else if(checkForWinner(&board, BLACK) == 1){
+				puts("b");
+			}else{
+				//TODO: implement draw checking
+				puts(".");
+			}
+		}
+		
 		//move - makes a move
 		else if(strcmp("move", command) == 0){
 			struct Move move = stringToMove(args);
@@ -100,7 +117,8 @@ int main(){
 		else if(strcmp("think", command) == 0){
 			struct Move move = think(&board);
 			printMove(&move);
-			putchar('\n');	
+			
+			putchar('\n');
 		}
 		
 		//Invalid command

@@ -12,6 +12,8 @@ NAME = 'Tkreeper v.3a'
 
 BOARD_SIZE = 12 * 8 * 6.5
 
+ENGINE_PROCESS = None
+
 class CreeperBoard(Canvas):
     def __init__(self, parent):        
         Canvas.__init__(self, parent,
@@ -164,25 +166,25 @@ class CreeperBoard(Canvas):
             drawPath(1+mx, 5, board.pop(0))
                 
         turn = board.pop()
-        self.winner = None
-        if turn.isupper():
-            if turn == 'W':
-                self.winner = WHITE
-            elif turn == 'B':
-                self.winner = BLACK
-            else:
-                self.winner = DRAW
-        else:
-            if turn == 'w':
-                self.turn = WHITE
-            elif turn == 'b':
-                self.turn = BLACK
+        if turn == 'w':
+            self.turn = WHITE
+        elif turn == 'b':
+            self.turn = BLACK
         
         if self.turn == WHITE:
             self.parent.title(NAME + ' - White to Move')
         elif self.turn == BLACK:
             self.parent.title(NAME + ' - Black to Move')
-    
+        
+        self.engine.send('getwinner')
+        winner = self.engine.listen()
+        
+        self.winner = None
+        if winner == 'w':
+            self.winner = WHITE
+        elif winner == 'b':
+            self.winner = BLACK
+        
         if self.winner == WHITE:
             self.parent.title(NAME + ' - White Wins!')
         elif self.winner == BLACK:
@@ -200,15 +202,14 @@ class CreeperBoard(Canvas):
         
         self.selected = None
         
-        #if self.turn == BLACK and self.winner == None:
-        #    self.parent.after(250, self.computer_move) 
+        if self.turn == BLACK and self.winner == None:
+            self.parent.after(250, self.computer_move) 
     
     def computer_move(self):
         self.engine.send('think')
         move = self.engine.listen()
         self.engine.send('move ' + move)
         self.updateBoard()
-        print('\a')
         
     def pin_click_handler(self, pin):
         def pin_click(event):
@@ -254,6 +255,10 @@ class CreeperBoard(Canvas):
 class Engine(object):
     def __init__(self):
         self.__process = Popen('bin/pilgrim', stdin=PIPE, stdout=PIPE)
+        
+        global ENGINE_PROCESS
+        ENGINE_PROCESS = self.__process
+        
         self.listen()
     
     def listen(self):
@@ -275,6 +280,7 @@ def main():
     CreeperBoard(root)
     
     root.mainloop()
-    
+        
 if __name__ == '__main__':
     main()
+    ENGINE_PROCESS.kill()

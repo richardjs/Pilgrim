@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <stdio.h>
+
 //Maximum number of moves is all eight pins moving in all eight different directions
 #define MAX_MOVES 8*8
 
@@ -20,6 +22,11 @@ enum Entity{
     WHITE_ENTITY = 0, BLACK_ENTITY = 1,
     WHITE_BASE, BLACK_BASE,
     EMPTY, DISABLED
+};
+
+//Outcomes of a game
+enum Outcome{
+    WHITE_WINS = 0, BLACK_WINS = 1, DRAW
 };
 
 //Structs
