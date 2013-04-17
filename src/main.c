@@ -64,6 +64,11 @@ int main(){
 			putchar('\n');
 		}
 		
+		//setboard - sets the board to a certain position
+		else if(strcmp("setboard", command) == 0){
+			board = stringToBoard(args);
+		}
+		
 		//getmoves - prints a list of possible moves
 		else if(strcmp("getmoves", command) == 0){
 			struct Move moves[MAX_MOVES];
