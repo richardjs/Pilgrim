@@ -4,6 +4,8 @@
 #include "board.h"
 #include "think.h"
 
+#include <math.h> //todo: remove
+
 int main(){
 	//Turn output buffering off
 	setbuf(stdout, NULL);
@@ -21,11 +23,12 @@ int main(){
 	char *args;
 	
 	struct Board board = newBoard();
-	//board = stringToBoard("bb..wb...w.wb.....w.......w.....bw.....bww.bb........w...www...w...www.......w");
-		
+	//board = stringToBoard("b...wb.b...wb.....w.......w.....bw....wbww.bb.......www...w....w...www.......w");
+    
 	int i;
 		
-	puts("Pilgrim v.3a ready");
+	puts("Pilgrim v.4a ready");
+	
 	
 	//Engine read-eval-print loop
 	for(;;){
