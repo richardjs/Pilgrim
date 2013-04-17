@@ -30,28 +30,6 @@ struct Node* makeNode(struct Node* parent, struct Move move){
     return node;
 }
 
-static int simulate(struct Board* board){
-    struct Move moves[MAX_MOVES];
-    int moveCount = getMoves(board, moves, 1);
-    enum Color turn = board->turn;
-    
-    while(moveCount > 0){
-        //TODO: switch to Mersenne twister RNG
-        makeMove(board, &moves[rand() % moveCount]);
-        moveCount = getMoves(board, moves, 1);
-    }
-    
-    if(moveCount == -1){
-        if(board->turn == turn){
-            return 1;
-        }else{
-            return -1;
-        }
-    }else{
-        return 0;
-    }
-}
-
 float calculateUCT(const struct Node* node){
     //Check for infinity first, to avoid wrapping around in equation
     if(node->value == POS_INFINITY) return POS_INFINITY;
@@ -78,6 +56,28 @@ struct Node* select(const struct Node* node){
     }
     
     return bestNode;
+}
+
+static int simulate(struct Board* board){
+    struct Move moves[MAX_MOVES];
+    int moveCount = getMoves(board, moves, 1);
+    enum Color turn = board->turn;
+    
+    while(moveCount > 0){
+        //TODO: switch to Mersenne twister RNG
+        makeMove(board, &moves[rand() % moveCount]);
+        moveCount = getMoves(board, moves, 1);
+    }
+    
+    if(moveCount == -1){
+        if(board->turn == turn){
+            return 1;
+        }else{
+            return -1;
+        }
+    }else{
+        return 0;
+    }
 }
 
 void updateValue(struct Node* node, int r){
@@ -157,6 +157,14 @@ static int solver(struct Board* board, struct Node* node){
     return r;
 }
 
+void freeNode(struct Node* node){
+    int i;
+    for(i = 0; i < node->childrenCount; i++){
+        freeNode(node->children[i]);
+    }
+    free(node);
+}
+
 struct Move think(struct Board* board){
     struct Move moves[MAX_MOVES];
     int moveCount = getMoves(board, moves, 1);
@@ -168,7 +176,7 @@ struct Move think(struct Board* board){
     }
         
     struct Node* root = makeNode(NULL, moves[0]);
-    for(i = 0; i < 10000 ; i++){
+    for(i = 0; i < 100000 ; i++){
         struct Board testBoard = *board;
         
         int winner = solver(&testBoard, root);
@@ -192,7 +200,7 @@ struct Move think(struct Board* board){
 
     struct Move finalMove = bestChild->move;
     
-    //TODO: free memory
+    freeNode(root);
     
     return finalMove;
 }
