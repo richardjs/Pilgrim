@@ -1,5 +1,6 @@
 from Tkinter import *
 from subprocess import Popen, PIPE
+from os import system
 
 #Enums
 #Entities of the same color have the same number, for easy comparison
@@ -284,3 +285,4 @@ def main():
 if __name__ == '__main__':
     main()
     ENGINE_PROCESS.kill()
+    system('killall pilgrim')
