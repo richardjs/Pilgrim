@@ -4,8 +4,6 @@
 #include "board.h"
 #include "think.h"
 
-#include <math.h> //todo: remove
-
 int main(){
 	//Turn output buffering off
 	setbuf(stdout, NULL);
@@ -23,7 +21,7 @@ int main(){
 	char *args;
 	
 	struct Board board = newBoard();
-	//board = stringToBoard("b...wb.b...wb.....w.......w.....bw....wbww.bb.......www...w....w...www.......w");
+//	board = stringToBoard("b...wb.b...wb.....w.......w.....bw....wbww.bb.......www...w....w...www.......w");
     
 	int i;
 		
@@ -35,7 +33,8 @@ int main(){
 		//Get input, skip if any errors, and trim newline off the end
 		inputRead = getline(&input, &inputLen, stdin);
 		if(inputRead <= 1){
-			continue;
+			break; //TODO: figure out a better way to quit once stdin breaks
+			//continue;
 		}
 		input[inputRead - 1] = '\0';
 		

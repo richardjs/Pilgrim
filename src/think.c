@@ -2,10 +2,9 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
-#define UCTK 1.0 //Parameter controlling exploration vs. exploitation
-#define AK 1 //Parameter for final move selection
-
+//Other constants (NOT to be changed to tweak algorithm)
 #define NEEDS_CHILDREN -2 //Indicates that a node has not had children generated yet
 
 struct Node{
@@ -30,7 +29,7 @@ struct Node* makeNode(struct Node* parent, struct Move move){
 }
 
 float calculateUCT(const struct Node* node){
-    return -node->value + sqrt((UCTK * log(node->parent->visits)) / node->visits);
+    return -node->value + sqrt(UCTK * log(node->parent->visits) / node->visits); //TODO: normally +
 }
 
 struct Node* select(const struct Node* node){
@@ -54,15 +53,69 @@ struct Node* select(const struct Node* node){
     return bestChild;
 }
 
+static int isCapture(const struct Move* move){
+    if(abs(move->start.x - move->end.x) == 2 ||
+       abs(move->start.y - move->end.y) == 2){
+        return 1;
+    }
+    return 0;
+}
+
+static int getCaptureMoves(struct Move allMoves[], int moveCount, 
+                           struct Move captureMoves[]){
+    int i;
+    int captureCount = 0;
+    for(i = 0; i < moveCount; i++){
+        if(isCapture(&allMoves[i])){
+            captureMoves[captureCount++] = allMoves[i];
+        }
+    }
+    
+    return captureCount;
+}
+
+static int countPins(enum Color color, const struct Board* board){
+    int i;
+    int pinCount = 0;
+    for(i = 0; i < 8; i++){
+        if(board->pins[color][i].x != -1){
+            pinCount++;
+        }
+    }
+}
+
 static int playOut(struct Board* board){
     struct Move moves[MAX_MOVES];
     int moveCount = getMoves(board, moves, 1);
     enum Color turn = board->turn;
     
-    while(moveCount > 0){
+    int depth = 0;
+    while(moveCount > 0 && depth < 50){
         //TODO: switch to Mersenne twister RNG
+        if(((double) rand() / (double) RAND_MAX) < SIM_FORCE_CAPTURE_CHANCE){
+            struct Move captureMoves[MAX_MOVES];
+            int captureCount = getCaptureMoves(moves, moveCount, captureMoves);
+            
+            enum Color other = !board->turn;
+            int i;
+            int pinCount = countPins(other, board);
+
+            if(captureCount && pinCount > 1){
+                makeMove(board, &captureMoves[rand() % captureCount]);
+                moveCount = getMoves(board, moves, 1);
+                continue;
+            }
+        }
+        
         makeMove(board, &moves[rand() % moveCount]);
         moveCount = getMoves(board, moves, 1);
+        depth++;
+    }
+    
+    if(depth >= 50){
+        int turnPins = countPins(turn, board);
+        int otherPins = countPins(!turn, board);
+        printf("%d %d\n", turnPins, otherPins);
     }
     
     if(moveCount == -1){
@@ -81,9 +134,9 @@ void update(struct Node* node, float r){
     node->value = ((node->value * (node->visits - 1)) + r) / node->visits;
 }
 
-static float solver(struct Board* board, struct Node* node){
+static float solver(struct Board* board, struct Node* node, int depth){
     int i;
-    
+
     //If node's children haven't been generated, generate them
     if(node->childrenCount == NEEDS_CHILDREN){
         struct Move moves[MAX_MOVES];
@@ -95,25 +148,29 @@ static float solver(struct Board* board, struct Node* node){
         }
     }
 
-    //If there's a win, take it
+    //If there's a win, take it. If there's no children, it's a draw.
     if(node->childrenCount == -1){
         update(node, INFINITY);
         return INFINITY;
+    }else if(node->childrenCount == 0){
+        //TODO: do we need to make this game-theoretical?
+        update(node, 0);
+        return 0;
     }
-    
+
     struct Node* bestChild = select(node);
     makeMove(board, &bestChild->move);
-    
+
     float r;
-    
+
     if(bestChild->value != INFINITY && bestChild->value != -INFINITY){
         //If the nodes has no visits, simulate it
-        if(bestChild->visits < 1){
+        if(bestChild->visits < MIN_VISITS){
             r = -playOut(board);
             update(bestChild, -r);
         }else{
             //Else go farther down the tree
-            r = -solver(board, bestChild);
+            r = -solver(board, bestChild, depth + 1);
         }
     }else{
         //Game-theoretical value
@@ -146,6 +203,8 @@ void freeNode(struct Node* node){
 }
 
 struct Move think(struct Board* board){
+    int start = time(0);
+
     struct Move moves[MAX_MOVES];
     int moveCount = getMoves(board, moves, 1);
     int i;
@@ -156,31 +215,46 @@ struct Move think(struct Board* board){
     }
         
     struct Node* root = makeNode(NULL, moves[0]); //Second arg meaningless here
-    for(i = 0; i < 100000 ; i++){
+    for(i = 0; i < ITERATIONS ; i++){
         struct Board testBoard = *board;
 
-        float result = solver(&testBoard, root);
+        float result = solver(&testBoard, root, 0);
         if(result == INFINITY || result == -INFINITY){
             break;
         }
     }
-
+    
+    int iterations = i;
     //Final move selection
     float bestScore = -INFINITY;
     struct Node* bestChild = NULL;
+    int totalVisits = 0;
     for(i = 0; i < root->childrenCount; i++){
         struct Node* child = root->children[i];
-        float score = -child->value * (AK / sqrt(child->visits));
+        float score = -child->value + (AK / sqrt(child->visits));
 
         if(score >= bestScore){
             bestScore = score;
             bestChild = child;
         }
+        
+        totalVisits += child->visits;
     }
 
     struct Move finalMove = bestChild->move;
-
-    fprintf(stderr, "Score: %f\n", -bestChild->value);
+    
+    int end = time(0);
+    
+    int elapsed = end - start;
+    
+    fprintf(stderr, "Score:\t\t%f\n", -bestChild->value);
+    fprintf(stderr, "Iterations:\t%d\n", iterations);
+    fprintf(stderr, "Elapsed:\t%ds\n", elapsed);
+    fprintf(stderr, "Visits:\t\t%d\n", bestChild->visits);
+    fprintf(stderr, "Focus:\t\t%f\n", 100.0*bestChild->visits/iterations);
+    fprintf(stderr, "Total visits:\t%d\n", totalVisits);
+    fprintf(stderr, "Root visits:\t%d\n", root->visits);
+    fprintf(stderr, "\n");
 
     freeNode(root);
     
