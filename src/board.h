@@ -51,6 +51,10 @@ struct Board{
     //Coord.x == -1 indicates a captured pin
     struct Coord pins[2][8];
     
+    //Convenience/caching storage for pin and path counts for each color
+    int pinCount[2];
+    int pathCount[2];
+    
     //Current turn
     enum Color turn;
 };

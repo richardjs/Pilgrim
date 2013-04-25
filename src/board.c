@@ -13,6 +13,8 @@ static void addPin(struct Board *board, enum Color color, int x, int y){
             break;
         }
     }
+    
+    board->pinCount[color]++;
 }
 
 //Set up a fresh board, ready to start a new game
@@ -38,6 +40,12 @@ struct Board newBoard(){
         board.pins[WHITE][i].x = -1;
         board.pins[BLACK][i].x = -1;    
     }
+    
+    //Clear count caches
+    board.pinCount[WHITE] = 0;
+    board.pinCount[BLACK] = 0;
+    board.pathCount[WHITE] = 0;
+    board.pathCount[BLACK] = 0;
 
     //Add base and disabled entities
     board.pinBoard[6][0] = DISABLED;
@@ -258,6 +266,11 @@ void makeMove(struct Board* board, const struct Move* move){
         int py = sy < ey ? sy : ey;
         
         if(board->pathBoard[py][px] == EMPTY || board->pathBoard[py][px] == other){
+            board->pathCount[turn]++;
+            if(board->pathBoard[py][px] == other){
+                board->pathCount[other]--;
+            }
+            
             board->pathBoard[py][px] = turn;
         }
     }
@@ -274,6 +287,8 @@ void makeMove(struct Board* board, const struct Move* move){
                 break;
             }
         }
+        
+        board->pinCount[other]--;
     }
     
     if(abs(sy - ey) == 2){
@@ -287,6 +302,8 @@ void makeMove(struct Board* board, const struct Move* move){
                 break;
             }
         }
+        
+        board->pinCount[other]--;
     }
     
     board->turn = other;
