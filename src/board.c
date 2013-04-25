@@ -305,7 +305,7 @@ void makeMove(struct Board* board, const struct Move* move){
         
         board->pinCount[other]--;
     }
-    
+        
     board->turn = other;
 }
 

@@ -25,7 +25,7 @@ int main(){
     
 	int i;
 		
-	puts("Pilgrim v.4a ready");
+	puts("Pilgrim v.5a ready");
 	
 	
 	//Engine read-eval-print loop

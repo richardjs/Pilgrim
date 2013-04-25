@@ -1,2 +1,1 @@
-gcc src/*.c src/*.h -o bin/pilgrim
-bin/pilgrim
+gcc src/*.c src/*.h -o bin/pilgrim -O3

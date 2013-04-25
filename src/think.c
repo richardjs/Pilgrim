@@ -25,6 +25,9 @@ struct Node* makeNode(struct Node* parent, struct Move move){
     node->move = move;
     node->childrenCount = NEEDS_CHILDREN;
     
+    node->visits = 0;
+    node->value = 0.0;
+    
     return node;
 }
 
@@ -74,24 +77,15 @@ static int getCaptureMoves(struct Move allMoves[], int moveCount,
     return captureCount;
 }
 
-static int countPins(enum Color color, const struct Board* board){
-    int i;
-    int pinCount = 0;
-    for(i = 0; i < 8; i++){
-        if(board->pins[color][i].x != -1){
-            pinCount++;
-        }
-    }
-}
-
 static int playOut(struct Board* board){
     struct Move moves[MAX_MOVES];
     int moveCount = getMoves(board, moves, 1);
     enum Color turn = board->turn;
     
     int depth = 0;
-    while(moveCount > 0 && depth < 50){
+    while(moveCount > 0 && depth < MAX_SIM_DEPTH){
         //TODO: switch to Mersenne twister RNG
+        /*
         if(((double) rand() / (double) RAND_MAX) < SIM_FORCE_CAPTURE_CHANCE){
             struct Move captureMoves[MAX_MOVES];
             int captureCount = getCaptureMoves(moves, moveCount, captureMoves);
@@ -106,27 +100,35 @@ static int playOut(struct Board* board){
                 continue;
             }
         }
+        */
         
         makeMove(board, &moves[rand() % moveCount]);
         moveCount = getMoves(board, moves, 1);
         depth++;
     }
     
-    if(depth >= 50){
-        int turnPins = countPins(turn, board);
-        int otherPins = countPins(!turn, board);
-        printf("%d %d\n", turnPins, otherPins);
+    //If max depth reached
+    if(depth == MAX_SIM_DEPTH){
+        if(board->pinCount[turn] > board->pinCount[!turn]){
+            return 1;
+        } else if(board->pinCount[!turn] > board->pinCount[turn]){
+            return -1;
+        } else{
+            return 0;
+        }
     }
     
+    //If a win is found
     if(moveCount == -1){
         if(board->turn == turn){
             return 1;
         }else{
             return -1;
         }
-    }else{
-        return 0;
     }
+    
+    //Draw due to no moves
+    return 0;
 }
 
 void update(struct Node* node, float r){
@@ -134,10 +136,10 @@ void update(struct Node* node, float r){
     node->value = ((node->value * (node->visits - 1)) + r) / node->visits;
 }
 
-static float solver(struct Board* board, struct Node* node, int depth){
+static float solver(struct Board* board, struct Node* node){
     int i;
 
-    //If node's children haven't been generated, generate them
+    //If the node's children haven't been generated, generate them
     if(node->childrenCount == NEEDS_CHILDREN){
         struct Move moves[MAX_MOVES];
         node->childrenCount = getMoves(board, moves, 1);
@@ -161,27 +163,23 @@ static float solver(struct Board* board, struct Node* node, int depth){
     struct Node* bestChild = select(node);
     makeMove(board, &bestChild->move);
 
-    float r;
+    float r; //result for node value this iteration, *always from this node's perspective*
 
     if(bestChild->value != INFINITY && bestChild->value != -INFINITY){
         //If the nodes has no visits, simulate it
-        if(bestChild->visits < MIN_VISITS){
+        if(bestChild->visits < MIN_SIMS){
             r = -playOut(board);
             update(bestChild, -r);
         }else{
             //Else go farther down the tree
-            r = -solver(board, bestChild, depth + 1);
+            r = -solver(board, bestChild);
         }
     }else{
         //Game-theoretical value
         r = -bestChild->value;
     }
 
-    //Game-theoretical logic 
-    if(r == INFINITY){
-        update(node, INFINITY);
-        return r;
-    }else if(r == -INFINITY){
+    if(r == -INFINITY){
         for(i = 0; i < node->childrenCount; i++){
             if(-node->children[i]->value != -INFINITY){
                 r = -1;
@@ -215,20 +213,19 @@ struct Move think(struct Board* board){
     }
         
     struct Node* root = makeNode(NULL, moves[0]); //Second arg meaningless here
-    for(i = 0; i < ITERATIONS ; i++){
+    int iterations;
+    for(iterations = 0; iterations < ITERATIONS ; iterations++){
         struct Board testBoard = *board;
 
-        float result = solver(&testBoard, root, 0);
+        float result = solver(&testBoard, root);
         if(result == INFINITY || result == -INFINITY){
             break;
         }
     }
-    
-    int iterations = i;
+
     //Final move selection
     float bestScore = -INFINITY;
     struct Node* bestChild = NULL;
-    int totalVisits = 0;
     for(i = 0; i < root->childrenCount; i++){
         struct Node* child = root->children[i];
         float score = -child->value + (AK / sqrt(child->visits));
@@ -237,8 +234,6 @@ struct Move think(struct Board* board){
             bestScore = score;
             bestChild = child;
         }
-        
-        totalVisits += child->visits;
     }
 
     struct Move finalMove = bestChild->move;
@@ -248,12 +243,10 @@ struct Move think(struct Board* board){
     int elapsed = end - start;
     
     fprintf(stderr, "Score:\t\t%f\n", -bestChild->value);
-    fprintf(stderr, "Iterations:\t%d\n", iterations);
-    fprintf(stderr, "Elapsed:\t%ds\n", elapsed);
     fprintf(stderr, "Visits:\t\t%d\n", bestChild->visits);
     fprintf(stderr, "Focus:\t\t%f\n", 100.0*bestChild->visits/iterations);
-    fprintf(stderr, "Total visits:\t%d\n", totalVisits);
-    fprintf(stderr, "Root visits:\t%d\n", root->visits);
+    fprintf(stderr, "Iterations:\t%d\n", iterations);
+    fprintf(stderr, "Elapsed:\t%ds\n", elapsed);
     fprintf(stderr, "\n");
 
     freeNode(root);
