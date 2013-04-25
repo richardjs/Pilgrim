@@ -172,6 +172,7 @@ struct Move think(struct Board* board){
     
     //Take a win without thinking
     if(moveCount == -1){
+        fprintf(stderr, "Taking win. Good game!\n");
         return moves[0];
     }
         
@@ -205,6 +206,10 @@ struct Move think(struct Board* board){
     
     int elapsed = end - start;
     
+    //TODO: can't remember the stderr output functions except fprintf--fix once have internet
+    fprintf(stderr, "Move:\t\t");
+    printMoveStdErr(&finalMove);
+    fprintf(stderr, "\n");
     fprintf(stderr, "Score:\t\t%f\n", -bestChild->value);
     fprintf(stderr, "Visits:\t\t%d\n", bestChild->visits);
     fprintf(stderr, "Focus:\t\t%f\n", 100.0*bestChild->visits/iterations);

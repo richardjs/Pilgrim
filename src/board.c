@@ -518,3 +518,12 @@ void printMove(const struct Move* move){
     printf("%c%d-%c%d", move->start.x + 65, move->start.y + 1,
                         move->end.x + 65, move->end.y + 1);
 }
+
+//Used in printing technical readouts after a 'think' command.
+//Yeah, copy-paste from above. Not pretty. I know.
+void printMoveStdErr(const struct Move* move){
+    char startCol = move->start.x + 65;
+    char endCol = move->end.x + 65;
+    fprintf(stderr, "%c%d-%c%d", move->start.x + 65, move->start.y + 1,
+                                 move->end.x + 65, move->end.y + 1);
+}

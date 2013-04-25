@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from subprocess import Popen, PIPE
 from random import shuffle
 import sys

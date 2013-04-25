@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from Tkinter import *
 from subprocess import Popen, PIPE
 from os import system

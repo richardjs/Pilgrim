@@ -87,5 +87,6 @@ struct Move stringToMove(const char[]);
 //Serialize the various structs and write to stdout (with no newline)
 void printBoard(const struct Board*);
 void printMove(const struct Move*);
+void printMoveStdErr(const struct Move*); //Same as above, but to stderr
 
 #endif
