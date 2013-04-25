@@ -19,7 +19,6 @@
 //Parameter for final move selection; pretty technical--shouldn't need tweaking
 #define AK 1
 
-//#define SIM_FORCE_CAPTURE_CHANCE .3 //Chance that a given move in a simulation must be a capture
 
 struct Move think(struct Board*);
 

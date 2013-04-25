@@ -23,6 +23,7 @@ struct Node* makeNode(struct Node* parent, struct Move move){
 
     node->parent = parent;
     node->move = move;
+    
     node->childrenCount = NEEDS_CHILDREN;
     
     node->visits = 0;
@@ -56,27 +57,6 @@ struct Node* select(const struct Node* node){
     return bestChild;
 }
 
-static int isCapture(const struct Move* move){
-    if(abs(move->start.x - move->end.x) == 2 ||
-       abs(move->start.y - move->end.y) == 2){
-        return 1;
-    }
-    return 0;
-}
-
-static int getCaptureMoves(struct Move allMoves[], int moveCount, 
-                           struct Move captureMoves[]){
-    int i;
-    int captureCount = 0;
-    for(i = 0; i < moveCount; i++){
-        if(isCapture(&allMoves[i])){
-            captureMoves[captureCount++] = allMoves[i];
-        }
-    }
-    
-    return captureCount;
-}
-
 static int playOut(struct Board* board){
     struct Move moves[MAX_MOVES];
     int moveCount = getMoves(board, moves, 1);
@@ -85,23 +65,6 @@ static int playOut(struct Board* board){
     int depth = 0;
     while(moveCount > 0 && depth < MAX_SIM_DEPTH){
         //TODO: switch to Mersenne twister RNG
-        /*
-        if(((double) rand() / (double) RAND_MAX) < SIM_FORCE_CAPTURE_CHANCE){
-            struct Move captureMoves[MAX_MOVES];
-            int captureCount = getCaptureMoves(moves, moveCount, captureMoves);
-            
-            enum Color other = !board->turn;
-            int i;
-            int pinCount = countPins(other, board);
-
-            if(captureCount && pinCount > 1){
-                makeMove(board, &captureMoves[rand() % captureCount]);
-                moveCount = getMoves(board, moves, 1);
-                continue;
-            }
-        }
-        */
-        
         makeMove(board, &moves[rand() % moveCount]);
         moveCount = getMoves(board, moves, 1);
         depth++;
