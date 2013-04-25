@@ -16,9 +16,8 @@
 //Maximum depth a simulation can go before it stopped and scored via heuristic
 #define MAX_SIM_DEPTH 150
 
-//Parameter for final move selection; pretty technical--shouldn't need tweaking
+//Parameter for final move selection; pretty technical, shouldn't need tweaking
 #define AK 1
-
 
 struct Move think(struct Board*);
 
