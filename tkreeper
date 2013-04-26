@@ -12,7 +12,7 @@ WHITE, BLACK, DRAW = range(3) #Outcomes
 
 NAME = 'Tkreeper v.3a'
 
-BOARD_SIZE = 12 * 8 * 6.5
+BOARD_SIZE = 12 * 8 * 7.5
 
 ENGINE_PROCESS = None
 
@@ -121,11 +121,11 @@ class CreeperBoard(Canvas):
             y = 6-y
             
             if color == 'w':
-                fill = '#fff'
+                fill = '#fff' #White pins
             elif color == 'b':
-                fill = '#222'
+                fill = '#222' #Black pins
             else:
-                fill = '#999'
+                fill = 'red' #Blank pins
             
             self.itemconfigure(self.pin_board[y][x], fill=fill)
         
@@ -133,9 +133,9 @@ class CreeperBoard(Canvas):
             y = 5-y
             
             if color == 'w':
-                fill = '#ddd'
+                fill = '#ddd' #White paths
             elif color == 'b':
-                fill = '#333'
+                fill = '#333' #Black paths
             else:
                 return
             
