@@ -22,6 +22,9 @@ Pilgrim is written ANSI C, except using C99's INFINITY value. Tkreeper, a rough 
 compiler should be able to compile the engine, and a short build script is provided for GCC. If you don't have Python, get
 it from the [Python website](http://www.python.org). The latest version of Python 2 (not Python 3) should work.
 
+The algorithm parameters in src/think.h are of interest. Tweaking these could potentially improve playing strength, perhaps
+significantly.
+
 ###Tkreeper
 
 Pilgrim is bundled with Tkreeper, a rough GUI board. Its purpose is to provide a simple way to play against the engine.
