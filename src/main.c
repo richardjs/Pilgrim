@@ -1,8 +1,11 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include "board.h"
 #include "think.h"
+
+#define MAX_LINE_SIZE 128
 
 int main(){
 	//Turn output buffering off
@@ -12,9 +15,7 @@ int main(){
 	srand(time(NULL));
 
 	//Input buffer and associated size variables
-	char *input = NULL;
-	size_t inputLen = 0;
-	ssize_t inputRead;
+	char input[MAX_LINE_SIZE];
 	
 	//Pointers to the command and args in the input buffer
 	char *command;
@@ -27,21 +28,17 @@ int main(){
 		
 	puts("Pilgrim v.5a ready");
 	
-	
 	//Engine read-eval-print loop
 	for(;;){
 		//Get input, skip if any errors, and trim newline off the end
-		inputRead = getline(&input, &inputLen, stdin);
-		if(inputRead <= 1){
-			break; //TODO: figure out a better way to quit once stdin breaks
-			//continue;
-		}
-		input[inputRead - 1] = '\0';
+		fgets(input, MAX_LINE_SIZE, stdin);
 		
 		//Convert input to lower case
 		for(i = 0; input[i]; i++){
 			input[i] = tolower(input[i]);
 		}
+		//Trim off newline
+		input[i - 1] = '\0';
 		
 		//Split at the first space to separate command and arguments
 		//NOTE: This changes (invalidates?) the input variable
@@ -134,6 +131,5 @@ int main(){
 		}
 	}
 	
-	free(input);
 	return 0;
 }
