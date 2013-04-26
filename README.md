@@ -16,7 +16,7 @@ Pilgrim currently plays a decent game at a beginning-intermediate level, but str
 game. There are several algorithm parameters that could be tweaked to potentially increase playing strength, and there are
 featuers of the algorithm implementation that could be improved.
 
-###Building and Running
+###Building and running
 
 Pilgrim is written ANSI C, except using C99's INFINITY value. Tkreeper, a rough GUI, is written in Python 2. Any modern C
 compiler should be able to compile the engine, and a short build script is provided for GCC. If you don't have Python, get
