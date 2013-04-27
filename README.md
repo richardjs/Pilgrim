@@ -19,8 +19,9 @@ featuers of the algorithm implementation that could be improved.
 ###Building and running
 
 Pilgrim is written ANSI C, except using C99's INFINITY value. Tkreeper, a rough GUI, is written in Python 2. Any modern C
-compiler should be able to compile the engine, and a short build script is provided for GCC. If you don't have Python, get
-it from the [Python website](http://www.python.org). The latest version of Python 2 (not Python 3) should work.
+compiler _should_ be able to compile the engine (although there's been reports of it breaking on Visual Studio), and a
+short build script is provided for GCC. If you don't have Python, get it from the [Python website](http://www.python.org).
+The latest version of Python 2 (not Python 3) should work.
 
 Please let me know if you have any problems building or running.
 
