@@ -62,10 +62,27 @@ static int playOut(struct Board* board){
     int moveCount = getMoves(board, moves, 1);
     enum Color turn = board->turn;
     
+    struct Move* move;
+    
     int depth = 0;
     while(moveCount > 0 && depth < MAX_SIM_DEPTH){
         //TODO: switch to Mersenne twister RNG
-        makeMove(board, &moves[rand() % moveCount]);
+        
+        move = &moves[rand() % moveCount];
+        
+        //If forcing a capture, find a random capture move
+        if(((double) rand() / (double) RAND_MAX) < SIM_FORCE_CAPTURE_CHANCE
+           && board->pinCount[!turn] > 1){
+            
+            struct Move captureMoves[MAX_MOVES];
+            int captureCount = getCaptureMoves(moves, moveCount, captureMoves);
+            
+            if(captureCount){
+                move = &captureMoves[rand() % captureCount];
+            }
+        }
+        
+        makeMove(board, move);
         moveCount = getMoves(board, moves, 1);
         depth++;
     }

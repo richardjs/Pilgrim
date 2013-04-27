@@ -379,6 +379,26 @@ int checkForWinner(const struct Board* board, const enum Color color){
     return 0;
 }
 
+int isCapture(const struct Move* move){
+    if(abs(move->start.x - move->end.x) == 2 ||
+       abs(move->start.y - move->end.y) == 2){
+        return 1;
+    }
+    return 0;
+}
+
+int getCaptureMoves(struct Move allMoves[], int moveCount, struct Move captureMoves[]){
+    int i;
+    int captureCount = 0;
+    for(i = 0; i < moveCount; i++){
+        if(isCapture(&allMoves[i])){
+            captureMoves[captureCount++] = allMoves[i];
+        }
+    }
+    
+    return captureCount;
+}
+
 int moveCompare(const struct Move* move1, const struct Move* move2){
     if(move1->start.x != move2->start.x) return 1;
     if(move1->start.y != move2->start.y) return 1;

@@ -77,6 +77,13 @@ void makeMove(struct Board*, const struct Move*);
 //Checks to see if the given color has won, returns 1 for win, 0 for loss
 int checkForWinner(const struct Board*, const enum Color);
 
+
+//Returns 1 if move is a capture move, else 0
+int isCapture(const struct Move*);
+//Searches allMoves (up to moveCount), playing capture moves in capturesMoves
+//Returns the number of capture moves found
+int getCaptureMoves(struct Move allMoves[], int moveCount, struct Move captureMoves[]);
+
 //Compares two moves, returning 0 if they are the same and 1 if not (mimicking strcmp)
 int moveCompare(const struct Move*, const struct Move*);
 
