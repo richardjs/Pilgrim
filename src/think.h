@@ -17,7 +17,7 @@
 #define MAX_SIM_DEPTH 150
 
 //Chance that a move in a simulation must be a capture
-#define SIM_FORCE_CAPTURE_CHANCE .25
+#define SIM_FORCE_CAPTURE_CHANCE 0
 
 //Parameter for final move selection; pretty technical, shouldn't need tweaking
 #define AK 1
