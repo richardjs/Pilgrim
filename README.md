@@ -18,8 +18,7 @@ featuers of the algorithm implementation that could be improved.
 
 ###Building and running
 
-Pilgrim is written ANSI C, except using C99's INFINITY value (as far as I know--I'm still new to pure C programming, see
-below). Tkreeper, a rough GUI, is written in Python 2. If you don't have Python, get it from the
+Pilgrim is written in C. Tkreeper, a rough GUI, is written in Python 2. If you don't have Python, get it from the
 [Python website](http://www.python.org). The latest version of Python 2 (not Python 3) should work.
 
 Please let me know if you have any problems building or running.
